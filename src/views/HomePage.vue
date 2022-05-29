@@ -14,10 +14,15 @@
     </header>
     <main class="shop container">
       <div class="brands">
-        <h2 class="brands__title">All Brands</h2>
+        <h2 class="brands__title" @click="setFilterBrand('')">All Brands</h2>
         <ul class="brands__list">
-          <li class="brands__list-item" v-for="brand in brands" :key="brand.id">
-            {{brand.title}}
+          <li 
+            class="brands__list-item" 
+            v-for="brand in brands" 
+            :key="brand.id"
+            @click="setFilterBrand(brand.title)"
+          >
+            {{ brand.title }}
           </li>
         </ul>
       </div>
@@ -43,6 +48,7 @@ import ProductItem from "../components/ProductItem.vue";
 const products = ref([]);
 const brands = ref([]);
 const elements = ref([]);
+const filterBrand = ref('')
 
 const getProducts = () => {
   fetch(`../../assets/products.json`)
@@ -67,10 +73,24 @@ onMounted(() => {
 });
 
 watch(brands, () => {
-  elements.value = elements.value.map((element) => {
+  products.value = products.value.map((element) => {
     const val = brands.value.find(brand => brand.id === element.id)
     return { ...element, brandName: val.title };
   })
+})
+
+const setFilterBrand = (brandTitle) => {
+  filterBrand.value = brandTitle
+}
+
+watch(filterBrand, () => {
+  if (filterBrand.value.length > 0) {
+    elements.value = products.value.filter((element) => {
+      return element.brandName === filterBrand.value;
+    })
+  } else {
+    elements.value = products.value
+  }
 })
 
 </script>
@@ -101,6 +121,10 @@ watch(brands, () => {
   width: 150px;
   font-size: 18px;
   margin-bottom: 30px;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 .brands__list {
   list-style: none;
