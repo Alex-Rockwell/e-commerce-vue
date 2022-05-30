@@ -1,18 +1,19 @@
 <template>
-  <div>
-    <header class="home-header container">
+  <div class="container">
+    <header class="home-header">
       <RouterLink to="/">
         <img src="../../assets/images/logo.png" alt="logo icon" />
       </RouterLink>
-      <RouterLink to="/cart">
+      <RouterLink to="/cart" class="home-header__cart">
         <img
           src="../../assets/images/cart-icon.svg"
           alt="shopping cart icon"
           class="home-header__cart-icon"
         />
+        <span class="home-header__cart-count">{{cartItems.length}}</span>
       </RouterLink>
     </header>
-    <main class="shop container">
+    <main class="shop">
       <div class="brands">
         <h2 class="brands__title" @click="setFilterBrand('')">All Brands</h2>
         <ul class="brands__list">
@@ -20,7 +21,7 @@
             class="brands__list-item" 
             v-for="brand in brands" 
             :key="brand.id"
-            @click="setFilterBrand(brand.title)"
+            @click="setFilterBrand(brand.id)"
           >
             {{ brand.title }}
           </li>
@@ -41,9 +42,11 @@
 </template>
 
 <script setup>
+import { storeToRefs } from "pinia";
 import { onMounted, ref, watch, watchEffect } from "vue";
 import { RouterLink } from "vue-router";
 import ProductItem from "../components/ProductItem.vue";
+import { useCartStore } from "../stores/cartStore";
 
 const products = ref([]);
 const brands = ref([]);
@@ -56,7 +59,7 @@ const getProducts = () => {
     .then((data) => {
       products.value = data;
       elements.value = data;
-      // console.log('elements: ', elements.value);
+      // console.log('elements.value:   ', elements.value);
     });
 };
 const getBrands = () => {
@@ -64,7 +67,7 @@ const getBrands = () => {
     .then((res) => res.json())
     .then((data) => {
       brands.value = data;
-      // console.log('brands: ', data);
+      // console.log('brands.value:   ', brands.value);
     });
 };
 onMounted(() => {
@@ -72,26 +75,41 @@ onMounted(() => {
   getBrands();
 });
 
-watch(brands, () => {
-  products.value = products.value.map((element) => {
-    const val = brands.value.find(brand => brand.id === element.id)
-    return { ...element, brandName: val.title };
-  })
-})
-
-const setFilterBrand = (brandTitle) => {
-  filterBrand.value = brandTitle
+const setFilterBrand = (id) => {
+  filterBrand.value = id
+  // console.log('filterBrand.value:   ', filterBrand.value);
 }
 
 watch(filterBrand, () => {
-  if (filterBrand.value.length > 0) {
-    elements.value = products.value.filter((element) => {
-      return element.brandName === filterBrand.value;
+  if (filterBrand.value > 0) {
+    elements.value = products.value.filter((el) => {
+      return el.brand == filterBrand.value;
     })
   } else {
     elements.value = products.value
   }
 })
+
+/////////////////////////// Add brand name ///////////////////////
+
+const getBrandNames = () => {
+  elements.value = products.value.map((element) => {
+    const val = brands.value.find(brand => brand.id === element.id)
+    return { ...element, 'brandName': val.title };
+  })
+  products.value = products.value.map((element) => {
+    const val = brands.value.find(brand => brand.id === element.id)
+    return { ...element, 'brandName': val.title };
+  })
+}
+watch(brands, () => {
+  getBrandNames()
+})
+
+
+const cartStore = useCartStore()
+const {cartItems} = storeToRefs(cartStore)
+
 
 </script>
 
@@ -104,10 +122,27 @@ watch(filterBrand, () => {
   border-bottom: 1px solid #000;
   margin-bottom: 30px;
 }
+.home-header__cart {
+  position: relative;
+}
 .home-header__cart-icon {
   width: 30px;
   height: auto;
   margin-right: 30px;
+}
+.home-header__cart-count {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: -5px;
+  right: 15px;
+  border: 1px solid #000;
+  border-radius: 50%;
+  background-color: chartreuse;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .shop {
   display: flex;
