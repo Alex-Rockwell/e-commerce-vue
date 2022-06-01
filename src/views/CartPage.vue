@@ -2,7 +2,7 @@
   <div class="cartPage container">
     <header class="cart-header">
       <RouterLink to="/">
-        <img src="../../assets/images/logo.png">
+        <img src="../../assets/images/logo2.png" alt="logo icon" class="logo"/>
       </RouterLink>
     </header>
     <h1 class="cartPage__title">Shopping Cart</h1>
@@ -23,7 +23,7 @@
 
 <script setup>
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref, watch, watchEffect } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import { useCartStore } from '../stores/cartStore';
 import CartItem from '../components/CartItem.vue';
 
@@ -102,6 +102,10 @@ watch(cartItems, () => {
 .cartPage__empty-text {
   color: #777;
   font-size: 18px;
+}
+
+.logo {
+  width: 120px;
 }
 
 </style>

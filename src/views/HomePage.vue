@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <header class="home-header">
-      <RouterLink to="/">
-        <img src="../../assets/images/logo.png" alt="logo icon" />
+      <RouterLink to="/" class="logo-box">
+        <img src="../../assets/images/logo2.png" alt="logo icon" class="logo" />
       </RouterLink>
       <RouterLink to="/cart" class="home-header__cart">
         <img
@@ -10,16 +10,16 @@
           alt="shopping cart icon"
           class="home-header__cart-icon"
         />
-        <span class="home-header__cart-count">{{cartItems.length}}</span>
+        <span class="home-header__cart-count">{{ cartItems.length }}</span>
       </RouterLink>
     </header>
     <main class="shop">
       <div class="brands">
         <h2 class="brands__title" @click="setFilterBrand('')">All Brands</h2>
         <ul class="brands__list">
-          <li 
-            class="brands__list-item" 
-            v-for="brand in brands" 
+          <li
+            class="brands__list-item"
+            v-for="brand in brands"
             :key="brand.id"
             @click="setFilterBrand(brand.id)"
           >
@@ -30,7 +30,7 @@
       <div class="catalog">
         <h1 class="catalog__title">Catalog</h1>
         <div class="catalog__container">
-          <ProductItem 
+          <ProductItem
             v-for="element in elements"
             :key="element.id"
             :product="element"
@@ -43,7 +43,7 @@
 
 <script setup>
 import { storeToRefs } from "pinia";
-import { onMounted, ref, watch, watchEffect } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { RouterLink } from "vue-router";
 import ProductItem from "../components/ProductItem.vue";
 import { useCartStore } from "../stores/cartStore";
@@ -51,7 +51,7 @@ import { useCartStore } from "../stores/cartStore";
 const products = ref([]);
 const brands = ref([]);
 const elements = ref([]);
-const filterBrand = ref('')
+const filterBrand = ref("");
 
 const getProducts = () => {
   fetch(`../../assets/products.json`)
@@ -59,7 +59,6 @@ const getProducts = () => {
     .then((data) => {
       products.value = data;
       elements.value = data;
-      // console.log('elements.value:   ', elements.value);
     });
 };
 const getBrands = () => {
@@ -67,7 +66,7 @@ const getBrands = () => {
     .then((res) => res.json())
     .then((data) => {
       brands.value = data;
-      // console.log('brands.value:   ', brands.value);
+      // getBrandNames()
     });
 };
 onMounted(() => {
@@ -76,41 +75,37 @@ onMounted(() => {
 });
 
 const setFilterBrand = (id) => {
-  filterBrand.value = id
-  // console.log('filterBrand.value:   ', filterBrand.value);
-}
+  filterBrand.value = id;
+};
 
 watch(filterBrand, () => {
   if (filterBrand.value > 0) {
     elements.value = products.value.filter((el) => {
       return el.brand == filterBrand.value;
-    })
+    });
   } else {
-    elements.value = products.value
+    elements.value = products.value;
   }
-})
+});
 
 /////////////////////////// Add brand name ///////////////////////
 
 const getBrandNames = () => {
-  elements.value = products.value.map((element) => {
-    const val = brands.value.find(brand => brand.id === element.id)
-    return { ...element, 'brandName': val.title };
-  })
   products.value = products.value.map((element) => {
-    const val = brands.value.find(brand => brand.id === element.id)
-    return { ...element, 'brandName': val.title };
-  })
-}
+    let val1 = brands.value.find((brand) => brand.id == element.brand);
+    return { ...element, brandName: val1.title };
+  });
+  elements.value = products.value.map((element) => {
+    let val2 = brands.value.find((brand) => brand.id == element.brand);
+    return { ...element, brandName: val2.title };
+  });
+};
 watch(brands, () => {
-  getBrandNames()
-})
+  getBrandNames();
+});
 
-
-const cartStore = useCartStore()
-const {cartItems} = storeToRefs(cartStore)
-
-
+const cartStore = useCartStore();
+const { cartItems } = storeToRefs(cartStore);
 </script>
 
 <style lang="scss" scoped>
@@ -152,7 +147,7 @@ const {cartItems} = storeToRefs(cartStore)
 .brands {
   padding: 10px 20px 0;
 }
-.brands__title{
+.brands__title {
   width: 150px;
   font-size: 18px;
   margin-bottom: 30px;
@@ -168,7 +163,7 @@ const {cartItems} = storeToRefs(cartStore)
   font-size: 18px;
   padding: 7px 10px;
   border-radius: 3px;
-  transition: .2s ease;
+  transition: 0.2s ease;
 
   &:hover {
     cursor: pointer;
@@ -186,5 +181,13 @@ const {cartItems} = storeToRefs(cartStore)
   display: grid;
   grid-template-columns: repeat(4, auto);
   gap: 20px;
+}
+// .logo-box {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+.logo {
+  width: 120px;
 }
 </style>
