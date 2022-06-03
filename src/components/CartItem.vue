@@ -7,7 +7,13 @@
           class="cart-item__img"
         >
       </div>
-      <h3 class="cart-item__name">{{cartItem.brandName}} / {{cartItem.title}}</h3>
+      <div class="cart-item__desc-box">
+        <h3 class="cart-item__name">{{cartItem.brandName}} / {{cartItem.title}}</h3>
+        <div v-if="cartItem.type == 'configurable'" class="cart-item__info">
+          <h4>Color: {{cartItem.colorToBin}}</h4>
+          <h4>Size: {{cartItem.sizeToBin}}</h4>
+        </div>
+      </div>
       <span class="cart-item__price">${{cartItem.regular_price.value}}</span>
       <input type="number" class="cart-item__qty" v-model="qty" >
       <span class="cart-item__total">${{total}}</span>
@@ -65,8 +71,19 @@ onMounted(() => {
   height: auto;
   display: block;
 }
-.cart-item__name {
+.cart-item__desc-box {
   margin-right: auto;
+}
+// .cart-item__name {
+//   margin-right: auto;
+// }
+
+.cart-item__info {
+  margin-top: 10px;
+
+  & > * {
+    margin-bottom: 5px;
+  }
 }
 
 .cart-item__price {

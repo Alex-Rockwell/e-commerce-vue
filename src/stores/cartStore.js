@@ -6,8 +6,12 @@ export const useCartStore = defineStore({
     cartItems: []
   }),
   actions: {
-    addCartItem(cartItem) {
+    addCartItem(cartItem, colorToBin, sizeToBin) {
       const itemFinal = {...cartItem, qty: 1}
+      if (cartItem.type == 'configurable') {
+        itemFinal['colorToBin'] = colorToBin ? colorToBin : 'default (red)'
+        itemFinal['sizeToBin'] = sizeToBin ? sizeToBin : 'default (M)'
+      }
       this.cartItems = [...this.cartItems, itemFinal]
     },
     changeQty(id, qty) {

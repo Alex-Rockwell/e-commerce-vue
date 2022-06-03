@@ -19,4 +19,7 @@ import { RouterView } from 'vue-router'
   max-width: 1440px;
   margin: 0 auto;
 }
+body {
+  font-family: 'Roboto', sans-serif;
+}
 </style>

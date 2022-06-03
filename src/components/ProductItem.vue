@@ -2,7 +2,7 @@
   <div class="product">
     <div class="product__img-box">
       <img
-        :src="`../../assets/${product.image}`"
+        :src="`../../assets/${imageSrc}`"
         :alt="product.title"
         class="product__img"
       />
@@ -11,7 +11,7 @@
       <h2 class="product__title">{{ product.title }}</h2>
       <p class="product__desc">Brand: {{ product.brandName }}</p>
       <p class="product__desc">Price: {{ product.regular_price.value }}$</p>
-      <button class="pruduct__cart-btn" @click="addCartItem(product)">
+      <button class="pruduct__cart-btn" @click="addCartItem(product, colorToBin, sizeToBin)">
         <img
           src="../../assets/images/cart-icon.svg"
           alt="cart icon"
@@ -24,18 +24,26 @@
         <button
           class="product__color product__color--red"
           @click="setActiveColor('red')"
-          :class="{ active: activeColor.red }"
+          :class="{
+            active: activeColor.red,
+            notAvailable: !availableColor.red,
+          }"
         ></button>
-        <!-- :class="{ active: activeColor.red, notAvailable: !available.red }" -->
         <button
           class="product__color product__color--blue"
           @click="setActiveColor('blue')"
-          :class="activeColor.blue ? 'active' : ''"
+          :class="{
+            active: activeColor.blue,
+            notAvailable: !availableColor.blue,
+          }"
         ></button>
         <button
           class="product__color product__color--black"
           @click="setActiveColor('black')"
-          :class="activeColor.black ? 'active' : ''"
+          :class="{
+            active: activeColor.black,
+            notAvailable: !availableColor.black,
+          }"
         ></button>
       </div>
       <div>
@@ -60,23 +68,30 @@
           L
         </button>
       </div>
-      <!-- <h3>red: {{ activeColor.red }}</h3>
-      <h3>blue: {{ activeColor.blue }}</h3>
-      <h3>black: {{ activeColor.black }}</h3> -->
-      <h3>sizeM: {{ availableSize.sizeM }}</h3>
-      <h3>sizeL: {{ availableSize.sizeL }}</h3>
+      <!-- <h3>red: {{ availableColor.red }}</h3>
+      <h3>blue: {{ availableColor.blue }}</h3>
+      <h3>black: {{ availableColor.black }}</h3> -->
+      <!-- <h3>sizeM: {{ availableSize.sizeM }}</h3>
+      <h3>sizeL: {{ availableSize.sizeL }}</h3> -->
+      <!-- <h2>colorToBin: {{colorToBin}}</h2>
+      <h2>sizeToBin: {{sizeToBin}}</h2> -->
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from "vue-demi";
+import { onMounted, reactive, ref, watch } from "vue-demi";
 import { useCartStore } from "../stores/cartStore";
 
 const props = defineProps(["product"]);
 
 const cartStore = useCartStore();
 const { addCartItem } = cartStore;
+
+const configurable = props.product.type == 'configurable'
+const alertOptions = () => {
+  alert('Boo!!!')
+}
 
 /////////////////////////  Stage 3-1 ///////////////////////////
 
@@ -105,6 +120,8 @@ const { addCartItem } = cartStore;
 
 /////////////////////////  Stage 3-2 ///////////////////////////
 
+const currentColor = ref('')
+
 const activeColor = reactive({
   red: false,
   blue: false,
@@ -123,35 +140,53 @@ const availableSize = reactive({
   sizeM: true,
   sizeL: true,
 });
+const resetAvailableSizes = () => {
+  availableSize.sizeM = true
+  availableSize.sizeL = true
+}
 
 const setActiveColor = (arg) => {
-  let availableOptionsSku = props.product.variants.map((el) => el.product.sku);
+  currentColor.value = arg
   if (arg == "red") {
+    if (activeColor.red == true) {
+      activeColor.red = false
+      resetAvailableSizes()
+      return
+    }
     activeColor.red = true;
     activeColor.blue = false;
     activeColor.black = false;
-    let temp = availableOptionsSku.filter((el) => el.includes("red"));
-    defineAvailableSizes(temp)
+    defineAvailableSizes(arg)
     return;
   }
   if (arg == "blue") {
+    if (activeColor.blue == true) {
+      activeColor.blue = false
+      resetAvailableSizes()
+      return
+    }
     activeColor.blue = true;
     activeColor.red = false;
     activeColor.black = false;
-    let temp = availableOptionsSku.filter((el) => el.includes("blue"));
-    defineAvailableSizes(temp)
+    defineAvailableSizes(arg)
     return;
   }
   if (arg == "black") {
+    if (activeColor.black == true) {
+      activeColor.black = false
+      resetAvailableSizes()
+      return
+    }
     activeColor.black = true;
     activeColor.red = false;
     activeColor.blue = false;
-    let temp = availableOptionsSku.filter((el) => el.includes("black"));
-    defineAvailableSizes(temp)
+    defineAvailableSizes(arg)
     return;
   }
 };
-const defineAvailableSizes = (temp) => {
+const defineAvailableSizes = (arg) => {
+  let availableOptionsSku = props.product.variants.map((el) => el.product.sku);
+  let temp = availableOptionsSku.filter((el) => el.includes(arg));
   if (temp.some((el) => el.endsWith("m"))) {
     availableSize.sizeM = true;
   } else {
@@ -163,20 +198,100 @@ const defineAvailableSizes = (temp) => {
     availableSize.sizeL = false;
   }
 };
+const resetAvailableColors = () => {
+  availableColor.red = true
+  availableColor.blue = true
+  availableColor.black = true
+}
 const setActiveSize = (arg) => {
-  switch (arg) {
-    case "sizeM":
-      activeSize.sizeM = true;
-      activeSize.sizeL = false;
-      break;
-    case "sizeL":
-      activeSize.sizeL = true;
-      activeSize.sizeM = false;
-      break;
-    default:
-      break;
+  if (arg == "sizeM") {
+    if (activeSize.sizeM == true) {
+      activeSize.sizeM = false
+      resetAvailableColors()
+      return
+    }
+    activeSize.sizeM = true;
+    activeSize.sizeL = false;
+    defineAvailableColors(arg)
+    return;
+  }
+  if (arg == "sizeL") {
+    // activeSize.sizeL = !activeSize.sizeL;
+    if (activeSize.sizeL == true) {
+      activeSize.sizeL = false
+      resetAvailableColors()
+      return
+    }
+    activeSize.sizeL = true;
+    activeSize.sizeM = false;
+    defineAvailableColors(arg)
+    return;
   }
 };
+
+const defineAvailableColors = (arg) => {
+  let availableOptionsSku = props.product.variants.map((el) => el.product.sku);
+  let temp = availableOptionsSku.filter((el) => el.endsWith(arg[arg.length-1].toLowerCase()));
+  if (temp.some((el) => el.includes("red"))) {
+    availableColor.red = true;
+  } else {
+    availableColor.red = false;
+  }
+  if (temp.some((el) => el.includes("blue"))) {
+    availableColor.blue = true;
+  } else {
+    availableColor.blue = false;
+  }
+  if (temp.some((el) => el.includes("black"))) {
+    availableColor.black = true;
+  } else {
+    availableColor.black = false;
+  }
+};
+
+
+
+const colorToBin = ref('')
+const sizeToBin = ref('')
+watch([activeColor, activeSize], () => {
+  for (const key in activeColor) {
+    if (activeColor[key] == true) {
+      colorToBin.value = key
+    }
+  }
+  for (const key in activeSize) {
+    if (activeSize[key] == true) {
+      sizeToBin.value = key.slice(-1)
+    }
+  }
+})
+
+
+const imageSrc = ref()
+onMounted(() => {
+  imageSrc.value = props.product.image
+})
+watch([activeColor, activeSize], () => {
+  if (props.product.type == 'configurable') {
+    let productOpt = props.product.variants.map((el) => el.product)
+    let activeElement = productOpt.filter(el => el.sku.includes(currentColor.value))
+    imageSrc.value = activeElement[0].image.replace('image', 'images')
+  }
+})
+
+// ${product.type == 'configurable' ? product.image : product.image}
+
+
+
+
+
+
+
+
+
+
+
+
 </script>
 
 <style lang="scss" scoped>
@@ -219,6 +334,7 @@ const setActiveSize = (arg) => {
   display: flex;
   justify-content: center;
   align-items: center;
+  user-select: none;
 
   &:hover {
     cursor: pointer;
@@ -264,6 +380,7 @@ const setActiveSize = (arg) => {
   border: 1px solid #333;
   background-color: transparent;
   font-size: 13px;
+  user-select: none;
 
   &:hover {
     cursor: pointer;
@@ -276,6 +393,7 @@ const setActiveSize = (arg) => {
 .notAvailable {
   opacity: 0.3;
   cursor: default !important;
+  pointer-events: none;
 }
 
 .productItem__cart-icon {
