@@ -28,13 +28,15 @@ import { useCartStore } from '../stores/cartStore';
 import CartItem from '../components/CartItem.vue';
 
 const cartStore = useCartStore()
-const {cartItems} = storeToRefs(cartStore)
+const { cartItems } = storeToRefs(cartStore);
 const subTotal = ref(0)
 
 
 onMounted(() => {
   let n = 0
-  cartItems.value.map(el => {n += el.regular_price.value * el.qty})
+  cartItems.value.map((el) => {
+    n += el.regular_price.value * el.qty;
+  });
   subTotal.value = n
 })
 watch(cartItems, () => {

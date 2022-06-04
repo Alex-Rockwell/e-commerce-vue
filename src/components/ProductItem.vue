@@ -11,7 +11,16 @@
       <h2 class="product__title">{{ product.title }}</h2>
       <p class="product__desc">Brand: {{ product.brandName }}</p>
       <p class="product__desc">Price: {{ product.regular_price.value }}$</p>
-      <button class="pruduct__cart-btn" @click="addCartItem(product, colorToBin, sizeToBin)">
+      <button 
+        class="pruduct__cart-btn" 
+        @click="
+          {
+            needSelectedOptions
+              ? alertOptions()
+              : addCartItem(product, colorToCart, sizeToCart);
+          }
+        "
+      >
         <img
           src="../../assets/images/cart-icon.svg"
           alt="cart icon"
@@ -68,13 +77,6 @@
           L
         </button>
       </div>
-      <!-- <h3>red: {{ availableColor.red }}</h3>
-      <h3>blue: {{ availableColor.blue }}</h3>
-      <h3>black: {{ availableColor.black }}</h3> -->
-      <!-- <h3>sizeM: {{ availableSize.sizeM }}</h3>
-      <h3>sizeL: {{ availableSize.sizeL }}</h3> -->
-      <!-- <h2>colorToBin: {{colorToBin}}</h2>
-      <h2>sizeToBin: {{sizeToBin}}</h2> -->
     </div>
   </div>
 </template>
@@ -88,37 +90,8 @@ const props = defineProps(["product"]);
 const cartStore = useCartStore();
 const { addCartItem } = cartStore;
 
-const configurable = props.product.type == 'configurable'
-const alertOptions = () => {
-  alert('Boo!!!')
-}
 
-/////////////////////////  Stage 3-1 ///////////////////////////
-
-// const options = reactive({
-//   red: false,
-//   blue: false,
-//   black: false,
-//   sizeM: false,
-//   sizeL: false,
-// });
-
-// onMounted(() => {
-//   if (props.product.variants) {
-//     let availableOptionsSku = props.product.variants.map(
-//       (el) => el.product.sku
-//     );
-//     // console.log(availableOptionsSku)
-//     options.red = availableOptionsSku.some((el) => el.includes("red"));
-//     options.blue = availableOptionsSku.some((el) => el.includes("blue"));
-//     options.black = availableOptionsSku.some((el) => el.includes("black"));
-//     options.sizeM = availableOptionsSku.some((el) => el.endsWith("m"));
-//     options.sizeL = availableOptionsSku.some((el) => el.endsWith("l"));
-//     // console.log('!!!!!!!', availableOptionsSku.some(el => el.includes("red")))
-//   }
-// });
-
-/////////////////////////  Stage 3-2 ///////////////////////////
+//////////////////////  Define active and available options /////////////////////////
 
 const currentColor = ref('')
 
@@ -140,11 +113,28 @@ const availableSize = reactive({
   sizeM: true,
   sizeL: true,
 });
+
+/////////////////////////  Check initial available options ///////////////////////////
+
+onMounted(() => {
+  if (props.product.variants) {
+    let availableOptionsSku = props.product.variants.map(
+      (el) => el.product.sku
+    );
+    availableColor.red = availableOptionsSku.some((el) => el.includes("red"));
+    availableColor.blue = availableOptionsSku.some((el) => el.includes("blue"));
+    availableColor.black = availableOptionsSku.some((el) => el.includes("black"));
+    availableSize.sizeM = availableOptionsSku.some((el) => el.endsWith("m"));
+    availableSize.sizeL = availableOptionsSku.some((el) => el.endsWith("l"));
+  }
+});
+
+//////////////////////  Set active and available options /////////////////////////
+
 const resetAvailableSizes = () => {
   availableSize.sizeM = true
   availableSize.sizeL = true
 }
-
 const setActiveColor = (arg) => {
   currentColor.value = arg
   if (arg == "red") {
@@ -216,7 +206,6 @@ const setActiveSize = (arg) => {
     return;
   }
   if (arg == "sizeL") {
-    // activeSize.sizeL = !activeSize.sizeL;
     if (activeSize.sizeL == true) {
       activeSize.sizeL = false
       resetAvailableColors()
@@ -249,23 +238,25 @@ const defineAvailableColors = (arg) => {
   }
 };
 
+///////////////////  Define active colors and sizes  //////////////////////
+///////////////////  and send it to cart  /////////////////////////////////
 
-
-const colorToBin = ref('')
-const sizeToBin = ref('')
+const colorToCart = ref('')
+const sizeToCart = ref('')
 watch([activeColor, activeSize], () => {
   for (const key in activeColor) {
     if (activeColor[key] == true) {
-      colorToBin.value = key
+      colorToCart.value = key
     }
   }
   for (const key in activeSize) {
     if (activeSize[key] == true) {
-      sizeToBin.value = key.slice(-1)
+      sizeToCart.value = key.slice(-1)
     }
   }
 })
 
+///////////////////  Get image with active color  //////////////////////
 
 const imageSrc = ref()
 onMounted(() => {
@@ -279,30 +270,50 @@ watch([activeColor, activeSize], () => {
   }
 })
 
-// ${product.type == 'configurable' ? product.image : product.image}
+///////////////////  Check active options before add to Cart  //////////////////////
 
+const optionsChecked = () => {
+  let colorCheck = false
+  let sizeCheck = false
+  let res = false
+  for (const key in activeColor) {
+    if (activeColor[key] == true) colorCheck = true;
+  }
+  for (const key in activeSize) {
+    if (activeSize[key] == true) sizeCheck = true;
+  }
+  if (colorCheck && sizeCheck) {
+    res = true
+  } else {
+    res = false
+  }
+  return res
+}
 
+const needSelectedOptions = ref(false);
+onMounted(() => {
+  needSelectedOptions.value =
+    props.product.type == "configurable" ? true : false;
+})
+  
+watch([activeColor, activeSize], () => {
+  needSelectedOptions.value = !optionsChecked();
+})
 
-
-
-
-
-
-
-
-
+const alertOptions = () => {
+  alert("Please choose color and size for this product!");
+}
 
 </script>
 
 <style lang="scss" scoped>
 .product {
   height: auto;
-  width: 300px;
   border: 1px solid #bbb;
 }
 .product__img-box {
-  width: 300px;
-  height: 300px;
+  max-width: 400px;
+  height: auto;
 }
 .product__img {
   width: 100%;
@@ -335,11 +346,17 @@ watch([activeColor, activeSize], () => {
   justify-content: center;
   align-items: center;
   user-select: none;
+  opacity: 0.2;
+  transition: background-color 0.4s ease;
+  transition: opacity 0.6s ease;
 
   &:hover {
     cursor: pointer;
     background-color: chartreuse;
   }
+}
+.product:hover .pruduct__cart-btn {
+  opacity: 1;
 }
 
 .product__options-box {

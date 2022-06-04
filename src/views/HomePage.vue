@@ -53,6 +53,8 @@ const brands = ref([]);
 const elements = ref([]);
 const filterBrand = ref("");
 
+///////////////////////// Load Data /////////////////////////
+
 const getProducts = () => {
   fetch(`../../assets/products.json`)
     .then((res) => res.json())
@@ -73,6 +75,8 @@ onMounted(() => {
   getProducts();
   getBrands();
 });
+
+///////////////////////// Set Filters /////////////////////////
 
 const setFilterBrand = (id) => {
   filterBrand.value = id;
@@ -117,14 +121,17 @@ const { cartItems } = storeToRefs(cartStore);
   border-bottom: 1px solid #000;
   margin-bottom: 30px;
 }
+
 .home-header__cart {
   position: relative;
 }
+
 .home-header__cart-icon {
   width: 30px;
   height: auto;
   margin-right: 30px;
 }
+
 .home-header__cart-count {
   display: inline-block;
   width: 20px;
@@ -139,26 +146,71 @@ const { cartItems } = storeToRefs(cartStore);
   align-items: center;
   justify-content: center;
 }
+
 .shop {
   display: flex;
   align-items: flex-start;
   justify-content: stretch;
+
+  @media screen and (max-width: 500px) {
+    flex-direction: column;
+  }
+
+  & > *:first-child {
+    @media screen and (max-width: 950px) {
+      flex-basis: 15%;
+    }
+  }
+  & > *:last-child {
+    @media screen and (max-width: 750px) {
+      flex-basis: 100%;
+    }
+  }
+
+  @media screen and (max-width: 750px) {
+    grid-template-columns: repeat(1, auto);
+  }
 }
+
 .brands {
   padding: 10px 20px 0;
-}
-.brands__title {
   width: 150px;
+
+  @media screen and (max-width: 620px) {
+    width: 120px;
+  }
+  @media screen and (max-width: 580px) {
+    width: 90px;
+  }
+  @media screen and (max-width: 510px) {
+    width: 85px;
+    padding: 10px 15px 0;
+  }
+  @media screen and (max-width: 510px) {
+    width: 100%;
+  }
+}
+
+.brands__title {
   font-size: 18px;
   margin-bottom: 30px;
+  width: 150px;
 
   &:hover {
     cursor: pointer;
   }
 }
+
 .brands__list {
   list-style: none;
+
+  @media screen and (max-width: 500px) {
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
 }
+
 .brands__list-item {
   font-size: 18px;
   padding: 7px 10px;
@@ -173,20 +225,46 @@ const { cartItems } = storeToRefs(cartStore);
 
 .catalog {
   padding: 0 30px 50px;
+
+  @media screen and (max-width: 510px) {
+    padding: 0 15px 50px;
+  }
 }
+
 .catalog__title {
   margin-bottom: 30px;
 }
+
 .catalog__container {
   display: grid;
   grid-template-columns: repeat(4, auto);
   gap: 20px;
+  justify-items: start;
+  align-items: stretch;
+
+  @media screen and (max-width: 1200px) {
+    grid-template-columns: repeat(3, auto);
+  }
+
+  @media screen and (max-width: 1000px) {
+    grid-template-columns: repeat(2, auto);
+  }
+
+  @media screen and (max-width: 750px) {
+    grid-template-columns: repeat(1, auto);
+  }
 }
-// .logo-box {
-//   display: flex;
-//   align-items: center;
-//   justify-content: center;
-// }
+
+.logo-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 20px;
+
+  @media screen and (max-width: 510px) {
+    padding-left: 15px;
+  }
+}
 .logo {
   width: 120px;
 }

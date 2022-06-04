@@ -21,5 +21,6 @@ import { RouterView } from 'vue-router'
 }
 body {
   font-family: 'Roboto', sans-serif;
+  padding-bottom: 100px;
 }
 </style>

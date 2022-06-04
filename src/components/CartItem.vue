@@ -1,56 +1,67 @@
 <template>
-    <div class="cart-item">
-      <div class="cart-item__img-box">
-        <img 
-          :src="`../../assets/${cartItem.image}`" 
-          :alt="cartItem.title"
-          class="cart-item__img"
-        >
-      </div>
-      <div class="cart-item__desc-box">
-        <h3 class="cart-item__name">{{cartItem.brandName}} / {{cartItem.title}}</h3>
-        <div v-if="cartItem.type == 'configurable'" class="cart-item__info">
-          <h4>Color: {{cartItem.colorToBin}}</h4>
-          <h4>Size: {{cartItem.sizeToBin}}</h4>
-        </div>
-      </div>
-      <span class="cart-item__price">${{cartItem.regular_price.value}}</span>
-      <input type="number" class="cart-item__qty" v-model="qty" >
-      <span class="cart-item__total">${{total}}</span>
-      <button class="cart-item__delete-btn" @click="deleteCartItem(cartItem.id)">
-        <img
-          src="../../assets/images/trash-bin-icon.svg"
-          alt="delete icon"
-          class="cart-item__delete-icon"
-        />
-      </button>
+  <div class="cart-item">
+    <div class="cart-item__img-box">
+      <img :src="imageSrc" :alt="cartItem.title" class="cart-item__img" />
     </div>
+    <div class="cart-item__desc-box">
+      <h3 class="cart-item__name">
+        {{ cartItem.brandName }} / {{ cartItem.title }}
+      </h3>
+      <div v-if="cartItem.type == 'configurable'" class="cart-item__info">
+        <h4>Color: {{ cartItem.colorToCart }}</h4>
+        <h4>Size: {{ cartItem.sizeToCart }}</h4>
+      </div>
+    </div>
+    <span class="cart-item__price">${{ cartItem.regular_price.value }}</span>
+    <input type="number" class="cart-item__qty" v-model="qty" />
+    <span class="cart-item__total">${{ total }}</span>
+    <button class="cart-item__delete-btn" @click="deleteCartItem(cartItem.id)">
+      <img
+        src="../../assets/images/trash-bin-icon.svg"
+        alt="delete icon"
+        class="cart-item__delete-icon"
+      />
+    </button>
+  </div>
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from 'vue';
-import { useCartStore } from '../stores/cartStore';
+import { onMounted, ref, watch } from "vue";
+import { useCartStore } from "../stores/cartStore";
 
-const props = defineProps(['cartItem'])
-const qty = ref(1)
-const total = ref(props.cartItem.regular_price.value)
+const props = defineProps(["cartItem"]);
+const qty = ref(1);
+const total = ref(props.cartItem.regular_price.value);
 
-const cartStore = useCartStore()
-const {changeQty, deleteCartItem} = cartStore
+const cartStore = useCartStore();
+const { changeQty, deleteCartItem } = cartStore;
 
 watch(qty, () => {
-  total.value = (qty.value <= 0) ? 0 : Math.ceil((props.cartItem.regular_price.value*qty.value)*100)/100
-})
-
+  total.value =
+    qty.value <= 0
+      ? 0
+      : Math.ceil(props.cartItem.regular_price.value * qty.value * 100) / 100;
+});
 
 watch(total, () => {
-  changeQty(props.cartItem.id, qty.value)
-})
+  changeQty(props.cartItem.id, qty.value);
+});
 onMounted(() => {
-  changeQty(props.cartItem.id, qty.value)
-})
+  changeQty(props.cartItem.id, qty.value);
+});
 
+const imageSrc = ref(`../../assets/${props.cartItem.image}`);
 
+onMounted(() => {
+  if (props.cartItem.type == "configurable") {
+    let availPrsArray = props.cartItem.variants.map((el) => el.product);
+    let pctsWithCurrentColor = availPrsArray.filter((el) =>
+      el.sku.includes(props.cartItem.colorToCart)
+    );
+    let currImg = pctsWithCurrentColor[0].image.replace("image", "images");
+    imageSrc.value = `../../assets/${currImg}`;
+  }
+});
 </script>
 
 <style lang="scss" scoped>
