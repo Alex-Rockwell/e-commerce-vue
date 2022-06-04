@@ -1,27 +1,32 @@
 <template>
   <div class="cart-item">
-    <div class="cart-item__img-box">
-      <img :src="imageSrc" :alt="cartItem.title" class="cart-item__img" />
-    </div>
-    <div class="cart-item__desc-box">
-      <h3 class="cart-item__name">
-        {{ cartItem.brandName }} / {{ cartItem.title }}
-      </h3>
-      <div v-if="cartItem.type == 'configurable'" class="cart-item__info">
-        <h4>Color: {{ cartItem.colorToCart }}</h4>
-        <h4>Size: {{ cartItem.sizeToCart }}</h4>
+    <div class="cart-item__left-box">
+      <div class="cart-item__img-box">
+        <img :src="imageSrc" :alt="cartItem.title" class="cart-item__img" />
+      </div>
+      <div class="cart-item__desc-box">
+        <h3 class="cart-item__name">
+          <span>{{ cartItem.brandName }} / </span>
+          <span>{{ cartItem.title }}</span>
+        </h3>
+        <div v-if="cartItem.type == 'configurable'" class="cart-item__info">
+          <h4>Color: {{ cartItem.colorToCart }}</h4>
+          <h4>Size: {{ cartItem.sizeToCart }}</h4>
+        </div>
       </div>
     </div>
-    <span class="cart-item__price">${{ cartItem.regular_price.value }}</span>
-    <input type="number" class="cart-item__qty" v-model="qty" />
-    <span class="cart-item__total">${{ total }}</span>
-    <button class="cart-item__delete-btn" @click="deleteCartItem(cartItem.id)">
-      <img
-        src="../../assets/images/trash-bin-icon.svg"
-        alt="delete icon"
-        class="cart-item__delete-icon"
-      />
-    </button>
+    <div class="cart-item__rightbox">
+      <span class="cart-item__price">${{ cartItem.regular_price.value }}</span>
+      <input type="number" class="cart-item__qty" v-model="qty" />
+      <span class="cart-item__total">${{ total }}</span>
+      <button class="cart-item__delete-btn" @click="deleteCartItem(cartItem.id)">
+        <img
+          src="../../assets/images/trash-bin-icon.svg"
+          alt="delete icon"
+          class="cart-item__delete-icon"
+        />
+      </button>
+    </div>
   </div>
 </template>
 
@@ -72,6 +77,33 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: flex-start;
+
+  @media screen and (max-width: 640px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+.cart-item__left-box {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-right: auto;
+}
+.cart-item__rightbox {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  
+  @media screen and (max-width: 640px) {
+    padding-left: 25px;
+    padding-top: 30px;
+  }
+}
+.cart-item__name {
+  @media screen and (max-width: 360px) {
+    display: flex;
+    flex-direction: column;
+  }
 }
 .cart-item__img-box {
   width: 150px;
@@ -85,9 +117,6 @@ onMounted(() => {
 .cart-item__desc-box {
   margin-right: auto;
 }
-// .cart-item__name {
-//   margin-right: auto;
-// }
 
 .cart-item__info {
   margin-top: 10px;
@@ -111,12 +140,20 @@ onMounted(() => {
   &::-webkit-outer-spin-button {
     opacity: 1;
   }
+
+  @media screen and (max-width: 360px) {
+    margin-left: 25px;
+  }
 }
 
 .cart-item__total {
   width: 50px;
   margin-left: 40px;
   font-size: 18px;
+
+  @media screen and (max-width: 360px) {
+    margin-left: 25px;
+  }
 }
 
 .cart-item__delete-btn {

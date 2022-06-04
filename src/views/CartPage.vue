@@ -6,6 +6,18 @@
       </RouterLink>
     </header>
     <h1 class="cartPage__title">Shopping Cart</h1>
+
+
+    <div class="cartPage__subtitle">
+      <h2 class="cartPage__item">Item</h2>
+      <div class="cartPage__rightbox">
+        <h3 class="cartPage__price">Price</h3>
+        <h3 class="cartPage__qty">Qty</h3>
+        <h3 class="cartPage__total">Total</h3>
+      </div>
+    </div>
+
+
     <div v-if="cartItems.length <= 0" class="cartPage__empty">
       <p class="cartPage__empty-text">Cart is empty...</p>
     </div>
@@ -43,7 +55,6 @@ watch(cartItems, () => {
   let n = 0
   cartItems.value.map(el => {n += el.regular_price.value * el.qty})
   subTotal.value = Math.ceil(n*100)/100
-  // subTotal.value = cartItems.value.reduce((tot, num) => {tot += el.regular_price.value * el.qty})
 })
 
 </script>
@@ -56,6 +67,10 @@ watch(cartItems, () => {
   align-items: center;
   border-bottom: 1px solid #000;
   margin-bottom: 30px;
+
+  @media screen and (max-width: 640px) {
+    justify-content: flex-start;
+  }
 }
 .cartPage {
   padding: 0 20px;
@@ -69,10 +84,18 @@ watch(cartItems, () => {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 30px;
+
+  @media screen and (max-width: 640px) {
+    justify-content: flex-start;
+  }
 }
 .cartPage__btn-box {
   display: flex;
   justify-content: flex-end;
+
+  @media screen and (max-width: 640px) {
+    justify-content: flex-start;
+  }
 }
 .cartPage__check-btn {
   padding: 10px 50px;
@@ -110,5 +133,70 @@ watch(cartItems, () => {
   width: 120px;
 }
 
+
+
+////////////////////////////////////////////////////////
+.cartPage__subtitle {
+  padding-bottom: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  @media screen and (max-width: 640px) {
+    display: none;
+  }
+  
+}
+.cartPage__item {
+  margin-right: auto;
+  padding-left: 230px;
+
+  @media screen and (max-width: 640px) {
+    padding-left: 200px;
+  }
+}
+.cartPage__rightbox {
+  align-items: center;
+  justify-content: flex-start;
+  display: flex;
+  padding-right: 40px;
+  
+  @media screen and (max-width: 640px) {
+    padding-left: 25px;
+    padding-top: 30px;
+  }
+}
+.cartPage__price {
+  font-size: 18px;
+  margin-right: 10px;
+}
+.cartPage__qty {
+  width: 30px;
+  margin-left: 45px;
+  font-size: 15px;
+  padding: 3px;
+
+  @media screen and (max-width: 360px) {
+    // margin-left: 25px;
+  }
+}
+.cartPage__total {
+  width: 50px;
+  margin-left: 45px;
+  font-size: 18px;
+
+  @media screen and (max-width: 360px) {
+    // margin-left: 25px;
+  }
+}
+.cartPage__delete-btn {
+  border: none;
+  background-color: transparent;
+  margin-left: 30px;
+
+  &:hover {
+    // cursor: pointer;
+  }
+}
 </style>
 

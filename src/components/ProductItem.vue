@@ -354,6 +354,10 @@ const alertOptions = () => {
     cursor: pointer;
     background-color: chartreuse;
   }
+
+  @media (hover: none) {
+    opacity: 1;
+  }
 }
 .product:hover .pruduct__cart-btn {
   opacity: 1;
