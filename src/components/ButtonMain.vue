@@ -4,9 +4,7 @@
   </button>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>
 
 <style lang="scss" scoped>
 .cartPage__check-btn {
@@ -16,7 +14,7 @@
   border-radius: 5px;
   background-color: chartreuse;
   cursor: pointer;
-  transition: .2s ease-in;
+  transition: 0.2s ease-in;
 
   &:hover {
     background-color: rgb(131, 238, 24);

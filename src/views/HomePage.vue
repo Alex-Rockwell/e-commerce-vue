@@ -2,7 +2,7 @@
   <div class="container">
     <header class="home-header">
       <RouterLink to="/" class="logo-box">
-        <img src="../../assets/images/logo2.png" alt="logo icon" class="logo" />
+        <img src="../../assets/images/logo.png" alt="logo icon" class="logo" />
       </RouterLink>
       <RouterLink to="/cart" class="home-header__cart">
         <img
@@ -178,20 +178,6 @@ const { cartItems } = storeToRefs(cartStore);
   width: 150px;
   position: relative;
 
-  &::after {
-    content: '';
-    position: absolute;
-    top: 10%;
-    right: 5%;
-    width: 1px;
-    height: 80%;
-    background-color: #ccc;
-
-    @media screen and (max-width: 580px) {
-      background-color: transparent;
-    }
-  }
-
   @media screen and (max-width: 620px) {
     width: 120px;
   }
@@ -232,16 +218,42 @@ const { cartItems } = storeToRefs(cartStore);
   font-size: 18px;
   padding: 7px 10px;
   border-radius: 3px;
-  transition: 0.2s ease;
 
   &:hover {
     cursor: pointer;
-    background-color: #eee;
   }
+  position: relative;
 }
 
-.brands__list-item--active {
-  background-color: #eee;
+.brands__list-item::before {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 2px;
+  border-radius: 4px;
+  background-color: #bbb;
+  bottom: 0;
+  left: 10px;
+  transform-origin: right;
+  transform: scaleX(0);
+  transition: transform 0.3s ease-in-out;
+}
+
+.brands__list-item:hover::before {
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+.brands__list-item--active::before {
+  content: "";
+  position: absolute;
+  width: 70%;
+  height: 2px;
+  border-radius: 4px;
+  background-color: #bbb;
+  bottom: 0;
+  left: 10px;
+  transform: scaleX(1);
 }
 
 .catalog {
@@ -286,6 +298,7 @@ const { cartItems } = storeToRefs(cartStore);
     padding-left: 15px;
   }
 }
+
 .logo {
   width: 120px;
 }

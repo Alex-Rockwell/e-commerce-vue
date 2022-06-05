@@ -34,6 +34,7 @@ function close() {
   background-color: rgba(0, 0, 0, 0.05);
   z-index: 10;
 }
+
 .modal {
   position: fixed;
   top: 50%;

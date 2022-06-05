@@ -19,7 +19,10 @@
       <span class="cart-item__price">${{ cartItem.regular_price.value }}</span>
       <input type="number" class="cart-item__qty" v-model="qty" />
       <span class="cart-item__total">${{ total }}</span>
-      <button class="cart-item__delete-btn" @click="deleteCartItem(cartItem.id)">
+      <button
+        class="cart-item__delete-btn"
+        @click="deleteCartItem(cartItem.id)"
+      >
         <img
           src="../../assets/images/trash-bin-icon.svg"
           alt="delete icon"
@@ -83,37 +86,43 @@ onMounted(() => {
     align-items: flex-start;
   }
 }
+
 .cart-item__left-box {
   display: flex;
   align-items: center;
   justify-content: flex-start;
   margin-right: auto;
 }
+
 .cart-item__rightbox {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  
+
   @media screen and (max-width: 640px) {
     padding-left: 25px;
     padding-top: 30px;
   }
 }
+
 .cart-item__name {
   @media screen and (max-width: 360px) {
     display: flex;
     flex-direction: column;
   }
 }
+
 .cart-item__img-box {
   width: 150px;
   height: 150px;
 }
+
 .cart-item__img {
   width: 100%;
   height: auto;
   display: block;
 }
+
 .cart-item__desc-box {
   margin-right: auto;
 }
@@ -165,6 +174,7 @@ onMounted(() => {
     cursor: pointer;
   }
 }
+
 .cart-item__delete-icon {
   width: 17px;
   height: auto;
