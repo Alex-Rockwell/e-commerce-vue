@@ -10,11 +10,9 @@ lerna-debug.log*
 node_modules
 .DS_Store
 # dist
-dist-ssr
+# dist-ssr
 coverage
 *.local
-.gitignore
-vue.config.js
 
 /cypress/videos/
 /cypress/screenshots/
