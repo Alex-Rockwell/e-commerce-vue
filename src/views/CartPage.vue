@@ -28,7 +28,7 @@
     />
     <span class="cartPage__subtotal">Subtotal: ${{subTotal}}</span>
     <div class="cartPage__btn-box">
-      <button class="cartPage__check-btn">Checkout</button>
+      <ButtonMain>Checkout</ButtonMain>
     </div>
   </div>
 </template>
@@ -38,6 +38,7 @@ import { storeToRefs } from 'pinia';
 import { onMounted, ref, watch } from 'vue';
 import { useCartStore } from '../stores/cartStore';
 import CartItem from '../components/CartItem.vue';
+import ButtonMain from '../components/ButtonMain.vue';
 
 const cartStore = useCartStore()
 const { cartItems } = storeToRefs(cartStore);
@@ -97,23 +98,6 @@ watch(cartItems, () => {
     justify-content: flex-start;
   }
 }
-.cartPage__check-btn {
-  padding: 10px 50px;
-  font-weight: 600;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: chartreuse;
-  cursor: pointer;
-  transition: .2s ease-in;
-
-  &:hover {
-    background-color: rgb(131, 238, 24);
-    transform: translateY(-2px);
-  }
-  &:active {
-    transform: translateY(-1px);
-  }
-}
 
 .cartPage__empty {
   height: 30vh;
@@ -134,8 +118,6 @@ watch(cartItems, () => {
 }
 
 
-
-////////////////////////////////////////////////////////
 .cartPage__subtitle {
   padding-bottom: 15px;
   display: flex;
@@ -144,8 +126,7 @@ watch(cartItems, () => {
 
   @media screen and (max-width: 640px) {
     display: none;
-  }
-  
+  } 
 }
 .cartPage__item {
   margin-right: auto;
@@ -193,10 +174,6 @@ watch(cartItems, () => {
   border: none;
   background-color: transparent;
   margin-left: 30px;
-
-  &:hover {
-    // cursor: pointer;
-  }
 }
 </style>
 

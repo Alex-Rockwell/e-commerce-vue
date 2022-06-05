@@ -77,6 +77,7 @@
           L
         </button>
       </div>
+      <ModalAlertOptions v-if="isOpen" v-model:show="isOpen" />
     </div>
   </div>
 </template>
@@ -84,12 +85,14 @@
 <script setup>
 import { onMounted, reactive, ref, watch } from "vue-demi";
 import { useCartStore } from "../stores/cartStore";
+import ModalAlertOptions from "./ModalAlertOptions.vue";
 
 const props = defineProps(["product"]);
 
 const cartStore = useCartStore();
 const { addCartItem } = cartStore;
 
+const isOpen = ref(false)
 
 //////////////////////  Define active and available options /////////////////////////
 
@@ -301,7 +304,8 @@ watch([activeColor, activeSize], () => {
 })
 
 const alertOptions = () => {
-  alert("Please choose color and size for this product!");
+  // alert("Please choose color and size for this product!");
+  isOpen.value = true
 }
 
 </script>
