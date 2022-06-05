@@ -22,6 +22,7 @@
             v-for="brand in brands"
             :key="brand.id"
             @click="setFilterBrand(brand.id)"
+            :class="{ 'brands__list-item--active': brand.id == filterBrand }"
           >
             {{ brand.title }}
           </li>
@@ -37,7 +38,6 @@
           />
         </div>
       </div>
-
     </main>
   </div>
 </template>
@@ -69,7 +69,7 @@ const getBrands = () => {
     .then((res) => res.json())
     .then((data) => {
       brands.value = data;
-      // getBrandNames()
+      getBrandNames();
     });
 };
 onMounted(() => {
@@ -176,6 +176,21 @@ const { cartItems } = storeToRefs(cartStore);
 .brands {
   padding: 10px 20px 0;
   width: 150px;
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    width: 1px;
+    height: 80%;
+    background-color: #ccc;
+
+    @media screen and (max-width: 580px) {
+      background-color: transparent;
+    }
+  }
 
   @media screen and (max-width: 620px) {
     width: 120px;
@@ -186,6 +201,7 @@ const { cartItems } = storeToRefs(cartStore);
   @media screen and (max-width: 510px) {
     width: 85px;
     padding: 10px 15px 0;
+    border-right: none;
   }
   @media screen and (max-width: 510px) {
     width: 100%;
@@ -222,6 +238,10 @@ const { cartItems } = storeToRefs(cartStore);
     cursor: pointer;
     background-color: #eee;
   }
+}
+
+.brands__list-item--active {
+  background-color: #eee;
 }
 
 .catalog {

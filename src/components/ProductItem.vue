@@ -11,8 +11,8 @@
       <h2 class="product__title">{{ product.title }}</h2>
       <p class="product__desc">Brand: {{ product.brandName }}</p>
       <p class="product__desc">Price: {{ product.regular_price.value }}$</p>
-      <button 
-        class="pruduct__cart-btn" 
+      <button
+        class="pruduct__cart-btn"
         @click="
           {
             needSelectedOptions
@@ -92,11 +92,11 @@ const props = defineProps(["product"]);
 const cartStore = useCartStore();
 const { addCartItem } = cartStore;
 
-const isOpen = ref(false)
+const isOpen = ref(false);
 
 //////////////////////  Define active and available options /////////////////////////
 
-const currentColor = ref('')
+const currentColor = ref("");
 
 const activeColor = reactive({
   red: false,
@@ -126,7 +126,9 @@ onMounted(() => {
     );
     availableColor.red = availableOptionsSku.some((el) => el.includes("red"));
     availableColor.blue = availableOptionsSku.some((el) => el.includes("blue"));
-    availableColor.black = availableOptionsSku.some((el) => el.includes("black"));
+    availableColor.black = availableOptionsSku.some((el) =>
+      el.includes("black")
+    );
     availableSize.sizeM = availableOptionsSku.some((el) => el.endsWith("m"));
     availableSize.sizeL = availableOptionsSku.some((el) => el.endsWith("l"));
   }
@@ -135,45 +137,45 @@ onMounted(() => {
 //////////////////////  Set active and available options /////////////////////////
 
 const resetAvailableSizes = () => {
-  availableSize.sizeM = true
-  availableSize.sizeL = true
-}
+  availableSize.sizeM = true;
+  availableSize.sizeL = true;
+};
 const setActiveColor = (arg) => {
-  currentColor.value = arg
+  currentColor.value = arg;
   if (arg == "red") {
     if (activeColor.red == true) {
-      activeColor.red = false
-      resetAvailableSizes()
-      return
+      activeColor.red = false;
+      resetAvailableSizes();
+      return;
     }
     activeColor.red = true;
     activeColor.blue = false;
     activeColor.black = false;
-    defineAvailableSizes(arg)
+    defineAvailableSizes(arg);
     return;
   }
   if (arg == "blue") {
     if (activeColor.blue == true) {
-      activeColor.blue = false
-      resetAvailableSizes()
-      return
+      activeColor.blue = false;
+      resetAvailableSizes();
+      return;
     }
     activeColor.blue = true;
     activeColor.red = false;
     activeColor.black = false;
-    defineAvailableSizes(arg)
+    defineAvailableSizes(arg);
     return;
   }
   if (arg == "black") {
     if (activeColor.black == true) {
-      activeColor.black = false
-      resetAvailableSizes()
-      return
+      activeColor.black = false;
+      resetAvailableSizes();
+      return;
     }
     activeColor.black = true;
     activeColor.red = false;
     activeColor.blue = false;
-    defineAvailableSizes(arg)
+    defineAvailableSizes(arg);
     return;
   }
 };
@@ -192,38 +194,40 @@ const defineAvailableSizes = (arg) => {
   }
 };
 const resetAvailableColors = () => {
-  availableColor.red = true
-  availableColor.blue = true
-  availableColor.black = true
-}
+  availableColor.red = true;
+  availableColor.blue = true;
+  availableColor.black = true;
+};
 const setActiveSize = (arg) => {
   if (arg == "sizeM") {
     if (activeSize.sizeM == true) {
-      activeSize.sizeM = false
-      resetAvailableColors()
-      return
+      activeSize.sizeM = false;
+      resetAvailableColors();
+      return;
     }
     activeSize.sizeM = true;
     activeSize.sizeL = false;
-    defineAvailableColors(arg)
+    defineAvailableColors(arg);
     return;
   }
   if (arg == "sizeL") {
     if (activeSize.sizeL == true) {
-      activeSize.sizeL = false
-      resetAvailableColors()
-      return
+      activeSize.sizeL = false;
+      resetAvailableColors();
+      return;
     }
     activeSize.sizeL = true;
     activeSize.sizeM = false;
-    defineAvailableColors(arg)
+    defineAvailableColors(arg);
     return;
   }
 };
 
 const defineAvailableColors = (arg) => {
   let availableOptionsSku = props.product.variants.map((el) => el.product.sku);
-  let temp = availableOptionsSku.filter((el) => el.endsWith(arg[arg.length-1].toLowerCase()));
+  let temp = availableOptionsSku.filter((el) =>
+    el.endsWith(arg[arg.length - 1].toLowerCase())
+  );
   if (temp.some((el) => el.includes("red"))) {
     availableColor.red = true;
   } else {
@@ -244,41 +248,43 @@ const defineAvailableColors = (arg) => {
 ///////////////////  Define active colors and sizes  //////////////////////
 ///////////////////  and send it to cart  /////////////////////////////////
 
-const colorToCart = ref('')
-const sizeToCart = ref('')
+const colorToCart = ref("");
+const sizeToCart = ref("");
 watch([activeColor, activeSize], () => {
   for (const key in activeColor) {
     if (activeColor[key] == true) {
-      colorToCart.value = key
+      colorToCart.value = key;
     }
   }
   for (const key in activeSize) {
     if (activeSize[key] == true) {
-      sizeToCart.value = key.slice(-1)
+      sizeToCart.value = key.slice(-1);
     }
   }
-})
+});
 
 ///////////////////  Get image with active color  //////////////////////
 
-const imageSrc = ref()
+const imageSrc = ref();
 onMounted(() => {
-  imageSrc.value = props.product.image
-})
+  imageSrc.value = props.product.image;
+});
 watch([activeColor, activeSize], () => {
-  if (props.product.type == 'configurable') {
-    let productOpt = props.product.variants.map((el) => el.product)
-    let activeElement = productOpt.filter(el => el.sku.includes(currentColor.value))
-    imageSrc.value = activeElement[0].image.replace('image', 'images')
+  if (props.product.type == "configurable") {
+    let productOpt = props.product.variants.map((el) => el.product);
+    let activeElement = productOpt.filter((el) =>
+      el.sku.includes(currentColor.value)
+    );
+    imageSrc.value = activeElement[0].image.replace("image", "images");
   }
-})
+});
 
 ///////////////////  Check active options before add to Cart  //////////////////////
 
 const optionsChecked = () => {
-  let colorCheck = false
-  let sizeCheck = false
-  let res = false
+  let colorCheck = false;
+  let sizeCheck = false;
+  let res = false;
   for (const key in activeColor) {
     if (activeColor[key] == true) colorCheck = true;
   }
@@ -286,28 +292,27 @@ const optionsChecked = () => {
     if (activeSize[key] == true) sizeCheck = true;
   }
   if (colorCheck && sizeCheck) {
-    res = true
+    res = true;
   } else {
-    res = false
+    res = false;
   }
-  return res
-}
+  return res;
+};
 
 const needSelectedOptions = ref(false);
 onMounted(() => {
   needSelectedOptions.value =
     props.product.type == "configurable" ? true : false;
-})
-  
+});
+
 watch([activeColor, activeSize], () => {
   needSelectedOptions.value = !optionsChecked();
-})
+});
 
 const alertOptions = () => {
   // alert("Please choose color and size for this product!");
-  isOpen.value = true
-}
-
+  isOpen.value = true;
+};
 </script>
 
 <style lang="scss" scoped>
@@ -316,13 +321,24 @@ const alertOptions = () => {
   border: 1px solid #bbb;
 }
 .product__img-box {
-  max-width: 400px;
+  max-width: 282px;
   height: auto;
+
+  @media screen and (max-width: 900px) {
+    max-width: 400px;
+  }
+  @media screen and (max-width: 900px) {
+    max-width: 450px;
+  }
 }
 .product__img {
   width: 100%;
   height: auto;
   display: block;
+  transition: 0.6s ease-in-out;
+}
+.product__img-box:hover .product__img {
+  transform: scale(1.05);
 }
 .product__desc-box {
   padding: 0 20px 10px;

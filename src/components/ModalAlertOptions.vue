@@ -8,7 +8,8 @@
         <ButtonMain
           @click="$emit('update:show', false)"
           class="cartPage__check-btn"
-          >Close</ButtonMain>
+          >Close</ButtonMain
+        >
       </div>
     </div>
   </div>
@@ -30,7 +31,7 @@ function close() {
   bottom: 0;
   left: 0;
   right: 0;
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
   z-index: 10;
 }
 .modal {
@@ -38,19 +39,32 @@ function close() {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  min-width: 400px;
-  min-height: 150px;
+  min-width: 450px;
+  min-height: 200px;
   padding: 30px;
+  border: 1px solid #ccc;
   background-color: white;
   z-index: 10;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  animation-name: a1;
+  animation-duration: 0.3s;
+  animation-timing-function: ease-in-out;
 }
+@keyframes a1 {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
 .modal__text {
   font-weight: 400;
   font-size: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 </style>
