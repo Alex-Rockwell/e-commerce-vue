@@ -38,18 +38,29 @@ import { onMounted, ref, watch } from "vue";
 import { useCartStore } from "../stores/cartStore";
 
 const props = defineProps(["cartItem"]);
-const qty = ref(1);
+const qty = ref(props.cartItem.qty);
 const total = ref(props.cartItem.regular_price.value);
 
 const cartStore = useCartStore();
 const { changeQty, deleteCartItem } = cartStore;
 
-watch(qty, () => {
+//////////////////////  Calculate total price /////////////////////////
+
+const getTotal = () => {
   total.value =
     qty.value <= 0
       ? 0
       : Math.ceil(props.cartItem.regular_price.value * qty.value * 100) / 100;
+}
+
+onMounted(() => {
+  getTotal()
+})
+watch(qty, () => {
+  getTotal()
 });
+
+//////////////////////  Change qantity in store /////////////////////////
 
 watch(total, () => {
   changeQty(props.cartItem.id, qty.value);
@@ -57,6 +68,8 @@ watch(total, () => {
 onMounted(() => {
   changeQty(props.cartItem.id, qty.value);
 });
+
+//////////////////////  Set image source /////////////////////////
 
 const imageSrc = ref(`../../assets/${props.cartItem.image}`);
 

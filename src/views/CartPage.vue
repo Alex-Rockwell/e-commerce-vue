@@ -43,19 +43,21 @@ const cartStore = useCartStore();
 const { cartItems } = storeToRefs(cartStore);
 const subTotal = ref(0);
 
-onMounted(() => {
-  let n = 0;
-  cartItems.value.map((el) => {
-    n += el.regular_price.value * el.qty;
-  });
-  subTotal.value = n;
-});
-watch(cartItems, () => {
+//////////////////////  Calculate subtotal sum /////////////////////////
+
+const getSubTotal = () => {
   let n = 0;
   cartItems.value.map((el) => {
     n += el.regular_price.value * el.qty;
   });
   subTotal.value = Math.ceil(n * 100) / 100;
+}
+
+onMounted(() => {
+  getSubTotal()
+});
+watch(cartItems, () => {
+  getSubTotal()
 });
 </script>
 

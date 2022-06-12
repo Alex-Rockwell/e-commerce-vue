@@ -6,9 +6,19 @@ export const useCartStore = defineStore({
     cartItems: [],
   }),
   actions: {
-    addCartItem(cartItem, colorToCart, sizeToCart) {
-      const itemFinal = { ...cartItem, qty: 1 };
-      if (cartItem.type == "configurable") {
+    addCartItem(productItem, colorToCart, sizeToCart) {
+      if (this.cartItems.some((el) => el.id == productItem.id)) {
+        this.cartItems.map(el => {
+          if (el.id == productItem.id) {
+            return { ...el, qty: el.qty++ }
+          } else {
+            return el
+          }
+        })
+        return
+      }
+      const itemFinal = { ...productItem, qty: 1 };
+      if (productItem.type == "configurable") {
         itemFinal["colorToCart"] = colorToCart ? colorToCart : "default (red)";
         itemFinal["sizeToCart"] = sizeToCart ? sizeToCart : "default (M)";
       }

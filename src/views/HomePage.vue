@@ -93,7 +93,7 @@ watch(filterBrand, () => {
   }
 });
 
-/////////////////////////// Add brand name ///////////////////////
+/////////////////////////// Add brand names ///////////////////////
 
 const getBrandNames = () => {
   products.value = products.value.map((element) => {
