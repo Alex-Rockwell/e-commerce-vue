@@ -17,7 +17,7 @@
           {
             needSelectedOptions
               ? alertOptions()
-              : addCartItem(product, colorToCart, sizeToCart);
+              : handleAddToCart(product, colorToCart, sizeToCart);
           }
         "
       >
@@ -91,6 +91,12 @@ const props = defineProps(["product"]);
 
 const cartStore = useCartStore();
 const { addCartItem } = cartStore;
+
+const emit = defineEmits(["change"]);
+const handleAddToCart = (product, colorToCart, sizeToCart) => {
+  addCartItem(product, colorToCart, sizeToCart)
+  emit('change')
+}
 
 const isOpen = ref(false);
 

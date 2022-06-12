@@ -10,7 +10,7 @@
           alt="shopping cart icon"
           class="home-header__cart-icon"
         />
-        <span class="home-header__cart-count">{{ cartItems.length }}</span>
+        <span class="home-header__cart-count">{{ cartItemsCount }}</span>
       </RouterLink>
     </header>
     <main class="shop">
@@ -35,6 +35,7 @@
             v-for="element in elements"
             :key="element.id"
             :product="element"
+            @change="setItemsCount()"
           />
         </div>
       </div>
@@ -109,8 +110,22 @@ watch(brands, () => {
   getBrandNames();
 });
 
+/////////////////////////// Cart items count ///////////////////////
+
 const cartStore = useCartStore();
 const { cartItems } = storeToRefs(cartStore);
+
+const cartItemsCount = ref(0);
+const setItemsCount = () => {
+  let count = 0;
+  cartItems.value.forEach((el) => {
+    count += el.qty;
+  });
+  cartItemsCount.value = count;
+};
+onMounted(() => {
+  setItemsCount();
+});
 </script>
 
 <style lang="scss" scoped>

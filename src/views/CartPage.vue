@@ -47,7 +47,7 @@ const subTotal = ref(0);
 
 const getSubTotal = () => {
   let n = 0;
-  cartItems.value.map((el) => {
+  cartItems.value.forEach((el) => {
     n += el.regular_price.value * el.qty;
   });
   subTotal.value = Math.ceil(n * 100) / 100;

@@ -7,8 +7,11 @@ export const useCartStore = defineStore({
   }),
   actions: {
     addCartItem(productItem, colorToCart, sizeToCart) {
-      if (this.cartItems.some((el) => el.id == productItem.id)) {
-        this.cartItems.map(el => {
+      if (
+        this.cartItems.some((el) => el.id == productItem.id) &&
+        productItem.type != "configurable"
+      ) {
+        this.cartItems.map((el) => {
           if (el.id == productItem.id) {
             return { ...el, qty: el.qty++ }
           } else {
