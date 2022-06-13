@@ -37,7 +37,7 @@
 import { onMounted, ref, watch } from "vue";
 import { useCartStore } from "../stores/cartStore";
 
-const props = defineProps(["cartItem"]);
+const props = defineProps(["cartItem", "cartItems"]);
 const qty = ref(props.cartItem.qty);
 const total = ref(props.cartItem.regular_price.value);
 
@@ -51,13 +51,13 @@ const getTotal = () => {
     qty.value <= 0
       ? 0
       : Math.ceil(props.cartItem.regular_price.value * qty.value * 100) / 100;
-}
+};
 
 onMounted(() => {
-  getTotal()
-})
+  getTotal();
+});
 watch(qty, () => {
-  getTotal()
+  getTotal();
 });
 
 //////////////////////  Change qantity in store /////////////////////////
@@ -71,9 +71,12 @@ onMounted(() => {
 
 //////////////////////  Set image source /////////////////////////
 
-const imageSrc = ref(`../../assets/${props.cartItem.image}`);
+const imageSrc = ref("");
 
 onMounted(() => {
+  if (props.cartItem.type != "configurable") {
+    imageSrc.value = `../../assets/${props.cartItem.image}`;
+  }
   if (props.cartItem.type == "configurable") {
     let availPrsArray = props.cartItem.variants.map((el) => el.product);
     let pctsWithCurrentColor = availPrsArray.filter((el) =>
@@ -81,8 +84,23 @@ onMounted(() => {
     );
     let currImg = pctsWithCurrentColor[0].image.replace("image", "images");
     imageSrc.value = `../../assets/${currImg}`;
+
+    //   let productsArray = props.cartItem.variants.map((el) => el.product);
+    //   let product = productsArray.find((el) => {
+    //     return el.id == props.cartItem.configurableId;
+    //   });
+    //   let currImg = product.image.replace("image", "images");
+    //   imageSrc.value = `../../assets/${currImg}`;
   }
 });
+// watch(props.cartItems, () => {
+//   let productsArray = props.cartItem.variants.map((el) => el.product);
+//   let product = productsArray.find((el) => {
+//     return el.id == props.cartItem.configurableId;
+//   });
+//   let currImg = product.image.replace("image", "images");
+//   imageSrc.value = `../../assets/${currImg}`;
+// });
 </script>
 
 <style lang="scss" scoped>

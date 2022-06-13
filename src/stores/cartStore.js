@@ -29,7 +29,30 @@ export const useCartStore = defineStore({
       if (productItem.type == "configurable") {
         itemFinal["colorToCart"] = colorToCart;
         itemFinal["sizeToCart"] = sizeToCart;
+
+        let variantsProducts = productItem.variants.map((el) => el.product);
+        let selectedProduct = variantsProducts.find(
+          (el) =>
+            el.sku.includes(colorToCart) &&
+            el.sku.endsWith(sizeToCart.toLowerCase())
+        );
+        itemFinal["configurableId"] = selectedProduct.id;
+        if (
+          this.cartItems.some((el) => el.configurableId == selectedProduct.id)
+        ) {
+          this.cartItems.map((el) => {
+            if (el.configurableId == selectedProduct.id) {
+              return { ...el, qty: el.qty++ };
+            } else {
+              return el;
+            }
+          });
+          return;
+        }
       }
+
+      ////////////////////// Add item to cart //////////////////////////////////////
+
       this.cartItems = [...this.cartItems, itemFinal];
     },
     changeQty(id, qty) {
@@ -41,10 +64,16 @@ export const useCartStore = defineStore({
       });
     },
     deleteCartItem(id) {
-      console.log("id: ", id);
-      this.cartItems = this.cartItems.filter((el) => {
-        return el.id != id;
-      });
+      let deleteItem = this.cartItems.find(el => el.id == id)
+      if (deleteItem.type != "configurable") {
+        this.cartItems = this.cartItems.filter(el => el.id != id);
+      } else {
+        this.cartItems = this.cartItems.filter((el) => {
+          if (el.configurableId) {
+            return el.configurableId != deleteItem.configurableId;
+          }
+        });
+      }
     },
   },
 });
