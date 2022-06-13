@@ -2,7 +2,7 @@
   <div class="product">
     <div class="product__img-box">
       <img
-        :src="`../../assets/${imageSrc}`"
+        :src="`./assets/${imageSrc}`"
         :alt="product.title"
         class="product__img"
       />
@@ -22,7 +22,7 @@
         "
       >
         <img
-          src="../../assets/images/cart-icon.svg"
+          src="./assets/images/cart-icon.svg"
           alt="cart icon"
           class="productItem__cart-icon"
         />

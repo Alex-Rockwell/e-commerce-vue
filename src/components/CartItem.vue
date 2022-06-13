@@ -24,7 +24,7 @@
         @click="deleteCartItem(cartItem.id)"
       >
         <img
-          src="../../assets/images/trash-bin-icon.svg"
+          src="./assets/images/trash-bin-icon.svg"
           alt="delete icon"
           class="cart-item__delete-icon"
         />
@@ -75,7 +75,7 @@ const imageSrc = ref("");
 
 onMounted(() => {
   if (props.cartItem.type != "configurable") {
-    imageSrc.value = `../../assets/${props.cartItem.image}`;
+    imageSrc.value = `./assets/${props.cartItem.image}`;
   }
   if (props.cartItem.type == "configurable") {
     let productsArray = props.cartItem.variants.map((el) => el.product);
@@ -83,7 +83,7 @@ onMounted(() => {
       return el.id == props.cartItem.configurableId;
     });
     let currImg = product.image.replace("image", "images");
-    imageSrc.value = `../../assets/${currImg}`;
+    imageSrc.value = `./assets/${currImg}`;
   }
 });
 </script>

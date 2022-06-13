@@ -2,11 +2,11 @@
   <div class="container">
     <header class="home-header">
       <RouterLink to="/" class="logo-box">
-        <img src="../../assets/images/logo.png" alt="logo icon" class="logo" />
+        <img src="../assets/images/logo.png" alt="logo icon" class="logo" />
       </RouterLink>
       <RouterLink to="/cart" class="home-header__cart">
         <img
-          src="../../assets/images/cart-icon.svg"
+          src="../assets/images/cart-icon.svg"
           alt="shopping cart icon"
           class="home-header__cart-icon"
         />
@@ -58,7 +58,7 @@ const filterBrand = ref("");
 ///////////////////////// Load Data /////////////////////////
 
 const getProducts = () => {
-  fetch(`../../assets/products.json`)
+  fetch(`./assets/products.json`)
     .then((res) => res.json())
     .then((data) => {
       products.value = data;
@@ -66,7 +66,7 @@ const getProducts = () => {
     });
 };
 const getBrands = () => {
-  fetch(`../../assets/brands.json`)
+  fetch(`./assets/brands.json`)
     .then((res) => res.json())
     .then((data) => {
       brands.value = data;
