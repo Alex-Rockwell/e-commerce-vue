@@ -22,7 +22,7 @@
         "
       >
         <img
-          src="./assets/images/cart-icon.svg"
+          src="../assets/images/cart-icon.svg"
           alt="cart icon"
           class="productItem__cart-icon"
         />

@@ -24,7 +24,7 @@
         @click="deleteCartItem(cartItem.id)"
       >
         <img
-          src="./assets/images/trash-bin-icon.svg"
+          src="../assets/images/trash-bin-icon.svg"
           alt="delete icon"
           class="cart-item__delete-icon"
         />

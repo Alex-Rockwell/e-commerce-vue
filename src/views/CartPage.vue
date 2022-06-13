@@ -2,7 +2,7 @@
   <div class="cartPage container">
     <header class="cart-header">
       <RouterLink to="/">
-        <img src="../../assets/images/logo.png" alt="logo icon" class="logo" />
+        <img src="../assets/images/logo.png" alt="logo icon" class="logo" />
       </RouterLink>
     </header>
     <h1 class="cartPage__title">Shopping Cart</h1>
