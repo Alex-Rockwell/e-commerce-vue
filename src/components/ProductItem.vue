@@ -333,7 +333,7 @@ const alertOptions = () => {
   @media screen and (max-width: 900px) {
     max-width: 258px;
   }
-  @media screen and (max-width: 900px) {
+  @media screen and (max-width: 750px) {
     max-width: 420px;
   }
 }

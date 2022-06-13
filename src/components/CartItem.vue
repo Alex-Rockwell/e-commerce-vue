@@ -78,29 +78,14 @@ onMounted(() => {
     imageSrc.value = `../../assets/${props.cartItem.image}`;
   }
   if (props.cartItem.type == "configurable") {
-    let availPrsArray = props.cartItem.variants.map((el) => el.product);
-    let pctsWithCurrentColor = availPrsArray.filter((el) =>
-      el.sku.includes(props.cartItem.colorToCart)
-    );
-    let currImg = pctsWithCurrentColor[0].image.replace("image", "images");
+    let productsArray = props.cartItem.variants.map((el) => el.product);
+    let product = productsArray.find((el) => {
+      return el.id == props.cartItem.configurableId;
+    });
+    let currImg = product.image.replace("image", "images");
     imageSrc.value = `../../assets/${currImg}`;
-
-    //   let productsArray = props.cartItem.variants.map((el) => el.product);
-    //   let product = productsArray.find((el) => {
-    //     return el.id == props.cartItem.configurableId;
-    //   });
-    //   let currImg = product.image.replace("image", "images");
-    //   imageSrc.value = `../../assets/${currImg}`;
   }
 });
-// watch(props.cartItems, () => {
-//   let productsArray = props.cartItem.variants.map((el) => el.product);
-//   let product = productsArray.find((el) => {
-//     return el.id == props.cartItem.configurableId;
-//   });
-//   let currImg = product.image.replace("image", "images");
-//   imageSrc.value = `../../assets/${currImg}`;
-// });
 </script>
 
 <style lang="scss" scoped>
