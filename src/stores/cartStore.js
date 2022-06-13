@@ -7,7 +7,7 @@ export const useCartStore = defineStore({
   }),
   actions: {
     addCartItem(productItem, colorToCart, sizeToCart) {
-      ////////////////////// Check if item is in the cart /////////////////////////
+      ////////////////////// Check if item is already in the cart /////////////////////
       if (
         this.cartItems.some((el) => el.id == productItem.id) &&
         productItem.type != "configurable"
@@ -37,6 +37,7 @@ export const useCartStore = defineStore({
             el.sku.endsWith(sizeToCart.toLowerCase())
         );
         itemFinal["configurableId"] = selectedProduct.id;
+        itemFinal["id"] = selectedProduct.id;
         if (
           this.cartItems.some((el) => el.configurableId == selectedProduct.id)
         ) {
@@ -52,7 +53,6 @@ export const useCartStore = defineStore({
       }
 
       ////////////////////// Add item to cart //////////////////////////////////////
-
       this.cartItems = [...this.cartItems, itemFinal];
     },
     changeQty(id, qty) {
@@ -64,16 +64,7 @@ export const useCartStore = defineStore({
       });
     },
     deleteCartItem(id) {
-      let deleteItem = this.cartItems.find(el => el.id == id)
-      if (deleteItem.type != "configurable") {
-        this.cartItems = this.cartItems.filter(el => el.id != id);
-      } else {
-        this.cartItems = this.cartItems.filter((el) => {
-          if (el.configurableId) {
-            return el.configurableId != deleteItem.configurableId;
-          }
-        });
-      }
+      this.cartItems = this.cartItems.filter((el) => el.id != id);
     },
   },
 });

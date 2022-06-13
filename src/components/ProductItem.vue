@@ -316,7 +316,6 @@ watch([activeColor, activeSize], () => {
 });
 
 const alertOptions = () => {
-  // alert("Please choose color and size for this product!");
   isOpen.value = true;
 };
 </script>
@@ -332,10 +331,10 @@ const alertOptions = () => {
   height: auto;
 
   @media screen and (max-width: 900px) {
-    max-width: 400px;
+    max-width: 258px;
   }
   @media screen and (max-width: 900px) {
-    max-width: 450px;
+    max-width: 420px;
   }
 }
 
