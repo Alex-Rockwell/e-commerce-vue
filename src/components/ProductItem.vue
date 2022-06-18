@@ -94,9 +94,9 @@ const { addCartItem } = cartStore;
 
 const emit = defineEmits(["change"]);
 const handleAddToCart = (product, colorToCart, sizeToCart) => {
-  addCartItem(product, colorToCart, sizeToCart)
-  emit('change')
-}
+  addCartItem(product, colorToCart, sizeToCart);
+  emit("change");
+};
 
 const isOpen = ref(false);
 
@@ -125,7 +125,7 @@ const availableSize = reactive({
 
 /////////////////////////  Check initial available options ///////////////////////////
 
-onMounted(() => {
+const getInitialAvailabltColors = () => {
   if (props.product.variants) {
     let availableOptionsSku = props.product.variants.map(
       (el) => el.product.sku
@@ -135,23 +135,31 @@ onMounted(() => {
     availableColor.black = availableOptionsSku.some((el) =>
       el.includes("black")
     );
+  }
+};
+const getInitialAvailabltSizes = () => {
+  if (props.product.variants) {
+    let availableOptionsSku = props.product.variants.map(
+      (el) => el.product.sku
+    );
     availableSize.sizeM = availableOptionsSku.some((el) => el.endsWith("m"));
     availableSize.sizeL = availableOptionsSku.some((el) => el.endsWith("l"));
   }
+};
+
+onMounted(() => {
+  getInitialAvailabltColors()
+  getInitialAvailabltSizes()
 });
 
-//////////////////////  Set active and available options /////////////////////////
+//////////////////////  Set active colors /////////////////////////
 
-const resetAvailableSizes = () => {
-  availableSize.sizeM = true;
-  availableSize.sizeL = true;
-};
 const setActiveColor = (arg) => {
   currentColor.value = arg;
   if (arg == "red") {
     if (activeColor.red == true) {
       activeColor.red = false;
-      resetAvailableSizes();
+      getInitialAvailabltSizes()
       return;
     }
     activeColor.red = true;
@@ -163,7 +171,7 @@ const setActiveColor = (arg) => {
   if (arg == "blue") {
     if (activeColor.blue == true) {
       activeColor.blue = false;
-      resetAvailableSizes();
+      getInitialAvailabltSizes()
       return;
     }
     activeColor.blue = true;
@@ -175,7 +183,7 @@ const setActiveColor = (arg) => {
   if (arg == "black") {
     if (activeColor.black == true) {
       activeColor.black = false;
-      resetAvailableSizes();
+      getInitialAvailabltSizes()
       return;
     }
     activeColor.black = true;
@@ -199,16 +207,14 @@ const defineAvailableSizes = (arg) => {
     availableSize.sizeL = false;
   }
 };
-const resetAvailableColors = () => {
-  availableColor.red = true;
-  availableColor.blue = true;
-  availableColor.black = true;
-};
+
+//////////////////////  Set active sizes /////////////////////////
+
 const setActiveSize = (arg) => {
   if (arg == "sizeM") {
     if (activeSize.sizeM == true) {
       activeSize.sizeM = false;
-      resetAvailableColors();
+      getInitialAvailabltColors();
       return;
     }
     activeSize.sizeM = true;
@@ -219,7 +225,7 @@ const setActiveSize = (arg) => {
   if (arg == "sizeL") {
     if (activeSize.sizeL == true) {
       activeSize.sizeL = false;
-      resetAvailableColors();
+      getInitialAvailabltColors();
       return;
     }
     activeSize.sizeL = true;

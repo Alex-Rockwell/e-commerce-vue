@@ -106,7 +106,7 @@ const getBrandNames = () => {
     return { ...element, brandName: val2.title };
   });
 };
-watch(brands, () => {
+onMounted(() => {
   getBrandNames();
 });
 

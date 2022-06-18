@@ -30,6 +30,7 @@ export const useCartStore = defineStore({
         itemFinal["colorToCart"] = colorToCart;
         itemFinal["sizeToCart"] = sizeToCart;
 
+        ////////////////////// Check if item is already in the cart /////////////////////
         let variantsProducts = productItem.variants.map((el) => el.product);
         let selectedProduct = variantsProducts.find(
           (el) =>

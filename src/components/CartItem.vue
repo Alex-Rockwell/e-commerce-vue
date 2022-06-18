@@ -37,7 +37,7 @@
 import { onMounted, ref, watch } from "vue";
 import { useCartStore } from "../stores/cartStore";
 
-const props = defineProps(["cartItem", "cartItems"]);
+const props = defineProps(["cartItem"]);
 const qty = ref(props.cartItem.qty);
 const total = ref(props.cartItem.regular_price.value);
 
