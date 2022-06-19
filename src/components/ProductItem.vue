@@ -31,50 +31,29 @@
     <div v-if="product.type == 'configurable'" class="product__options-box">
       <div>
         <button
-          class="product__color product__color--red"
-          @click="setActiveColor('red')"
+          v-for="el in colorValues"
+          :key="el.valueIndex"
+          class="product__color"
+          :style="{ backgroundColor: el.value }"
+          @click="setActiveColor(el.label.toLowerCase())"
           :class="{
-            active: activeColor.red,
-            notAvailable: !availableColor.red,
-          }"
-        ></button>
-        <button
-          class="product__color product__color--blue"
-          @click="setActiveColor('blue')"
-          :class="{
-            active: activeColor.blue,
-            notAvailable: !availableColor.blue,
-          }"
-        ></button>
-        <button
-          class="product__color product__color--black"
-          @click="setActiveColor('black')"
-          :class="{
-            active: activeColor.black,
-            notAvailable: !availableColor.black,
+            active: activeColor[el.label.toLowerCase()],
+            notAvailable: !availableColor[el.label.toLowerCase()],
           }"
         ></button>
       </div>
       <div>
         <button
-          class="product__size product__size--m"
-          @click="setActiveSize('sizeM')"
+          v-for="el in sizeValues"
+          :key="el.valueIndex"
+          class="product__size"
+          @click="setActiveSize('size' + el.label)"
           :class="{
-            active: activeSize.sizeM,
-            notAvailable: !availableSize.sizeM,
+            active: activeSize['size' + el.label],
+            notAvailable: !availableSize['size' + el.label],
           }"
         >
-          M
-        </button>
-        <button
-          class="product__size product__size--l"
-          @click="setActiveSize('sizeL')"
-          :class="{
-            active: activeSize.sizeL,
-            notAvailable: !availableSize.sizeL,
-          }"
-        >
-          L
+          {{ el.label }}
         </button>
       </div>
       <ModalAlertOptions v-if="isOpen" v-model:show="isOpen" />
@@ -104,135 +83,122 @@ const isOpen = ref(false);
 
 const currentColor = ref("");
 
-const activeColor = reactive({
-  red: false,
-  blue: false,
-  black: false,
+const activeColor = reactive({});
+const availableColor = reactive({});
+const colorValues = ref();
+
+const getColorOptions = () => {
+  if (props.product.configurable_options) {
+    let colorObj = props.product.configurable_options.find(
+      (el) => el.attribute_code == "color"
+    );
+    colorValues.value = colorObj.values;
+    colorValues.value.forEach((el) => {
+      activeColor[el.label.toLowerCase()] = false;
+      availableColor[el.label.toLowerCase()] = true;
+    });
+  }
+};
+onMounted(() => {
+  getColorOptions();
 });
-const activeSize = reactive({
-  sizeM: false,
-  sizeL: false,
-});
-const availableColor = reactive({
-  red: true,
-  blue: true,
-  black: true,
-});
-const availableSize = reactive({
-  sizeM: true,
-  sizeL: true,
+
+const activeSize = reactive({});
+const availableSize = reactive({});
+const sizeValues = ref();
+
+const getSizeOptions = () => {
+  if (props.product.configurable_options) {
+    let sizeObj = props.product.configurable_options.find(
+      (el) => el.attribute_code == "size"
+    );
+    sizeValues.value = sizeObj.values;
+    sizeValues.value.forEach((el) => {
+      activeSize["size" + el.label] = false;
+      availableSize["size" + el.label] = true;
+    });
+  }
+};
+onMounted(() => {
+  getSizeOptions();
 });
 
 /////////////////////////  Check initial available options ///////////////////////////
 
-const getInitialAvailabltColors = () => {
+const getInitialAvailableColors = () => {
   if (props.product.variants) {
     let availableOptionsSku = props.product.variants.map(
       (el) => el.product.sku
     );
-    availableColor.red = availableOptionsSku.some((el) => el.includes("red"));
-    availableColor.blue = availableOptionsSku.some((el) => el.includes("blue"));
-    availableColor.black = availableOptionsSku.some((el) =>
-      el.includes("black")
-    );
+    for (const key in availableColor) {
+      availableColor[key] = availableOptionsSku.some((el) => el.includes(key));
+    }
   }
 };
-const getInitialAvailabltSizes = () => {
+const getInitialAvailableSizes = () => {
   if (props.product.variants) {
     let availableOptionsSku = props.product.variants.map(
       (el) => el.product.sku
     );
-    availableSize.sizeM = availableOptionsSku.some((el) => el.endsWith("m"));
-    availableSize.sizeL = availableOptionsSku.some((el) => el.endsWith("l"));
+    for (const key in availableSize) {
+      availableSize[key] = availableOptionsSku.some((el) => {
+        return el.endsWith(key.slice(-1).toLowerCase());
+      });
+    }
   }
 };
 
 onMounted(() => {
-  getInitialAvailabltColors()
-  getInitialAvailabltSizes()
+  getInitialAvailableColors();
+  getInitialAvailableSizes();
 });
 
 //////////////////////  Set active colors /////////////////////////
 
 const setActiveColor = (arg) => {
   currentColor.value = arg;
-  if (arg == "red") {
-    if (activeColor.red == true) {
-      activeColor.red = false;
-      getInitialAvailabltSizes()
-      return;
-    }
-    activeColor.red = true;
-    activeColor.blue = false;
-    activeColor.black = false;
-    defineAvailableSizes(arg);
+  if (activeColor[arg] == true) {
+    activeColor[arg] = false;
+    getInitialAvailableSizes();
     return;
   }
-  if (arg == "blue") {
-    if (activeColor.blue == true) {
-      activeColor.blue = false;
-      getInitialAvailabltSizes()
-      return;
+  for (const key in activeColor) {
+    if (arg == key) {
+      activeColor[key] = true;
+    } else {
+      activeColor[key] = false;
     }
-    activeColor.blue = true;
-    activeColor.red = false;
-    activeColor.black = false;
-    defineAvailableSizes(arg);
-    return;
   }
-  if (arg == "black") {
-    if (activeColor.black == true) {
-      activeColor.black = false;
-      getInitialAvailabltSizes()
-      return;
-    }
-    activeColor.black = true;
-    activeColor.red = false;
-    activeColor.blue = false;
-    defineAvailableSizes(arg);
-    return;
-  }
+  defineAvailableSizes(arg);
 };
 const defineAvailableSizes = (arg) => {
   let availableOptionsSku = props.product.variants.map((el) => el.product.sku);
   let temp = availableOptionsSku.filter((el) => el.includes(arg));
-  if (temp.some((el) => el.endsWith("m"))) {
-    availableSize.sizeM = true;
-  } else {
-    availableSize.sizeM = false;
-  }
-  if (temp.some((el) => el.endsWith("l"))) {
-    availableSize.sizeL = true;
-  } else {
-    availableSize.sizeL = false;
+  for (const key in availableSize) {
+    if (temp.some((el) => el.endsWith(key.slice(-1).toLowerCase()))) {
+      availableSize[key] = true;
+    } else {
+      availableSize[key] = false;
+    }
   }
 };
 
 //////////////////////  Set active sizes /////////////////////////
 
 const setActiveSize = (arg) => {
-  if (arg == "sizeM") {
-    if (activeSize.sizeM == true) {
-      activeSize.sizeM = false;
-      getInitialAvailabltColors();
-      return;
-    }
-    activeSize.sizeM = true;
-    activeSize.sizeL = false;
-    defineAvailableColors(arg);
+  if (activeSize[arg] == true) {
+    activeSize[arg] = false;
+    getInitialAvailableColors();
     return;
   }
-  if (arg == "sizeL") {
-    if (activeSize.sizeL == true) {
-      activeSize.sizeL = false;
-      getInitialAvailabltColors();
-      return;
+  for (const key in activeSize) {
+    if (arg == key) {
+      activeSize[key] = true
+    } else {
+      activeSize[key] = false
     }
-    activeSize.sizeL = true;
-    activeSize.sizeM = false;
-    defineAvailableColors(arg);
-    return;
   }
+  defineAvailableColors(arg);
 };
 
 const defineAvailableColors = (arg) => {
@@ -240,20 +206,12 @@ const defineAvailableColors = (arg) => {
   let temp = availableOptionsSku.filter((el) =>
     el.endsWith(arg[arg.length - 1].toLowerCase())
   );
-  if (temp.some((el) => el.includes("red"))) {
-    availableColor.red = true;
-  } else {
-    availableColor.red = false;
-  }
-  if (temp.some((el) => el.includes("blue"))) {
-    availableColor.blue = true;
-  } else {
-    availableColor.blue = false;
-  }
-  if (temp.some((el) => el.includes("black"))) {
-    availableColor.black = true;
-  } else {
-    availableColor.black = false;
+  for (const key in availableColor) {
+    if (temp.some((el) => el.includes(key))) {
+      availableColor[key] = true;
+    } else {
+      availableColor[key] = false;
+    }
   }
 };
 
@@ -325,6 +283,7 @@ const alertOptions = () => {
   isOpen.value = true;
 };
 </script>
+
 
 <style lang="scss" scoped>
 .product {
@@ -420,16 +379,6 @@ const alertOptions = () => {
 
   &:hover {
     cursor: pointer;
-  }
-
-  &--red {
-    background-color: red;
-  }
-  &--blue {
-    background-color: blue;
-  }
-  &--black {
-    background-color: black;
   }
 }
 
