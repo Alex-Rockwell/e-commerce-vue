@@ -125,25 +125,24 @@ onMounted(() => {
 
 /////////////////////////  Check initial available options ///////////////////////////
 
+let variantsProductSku;
+if (props.product.variants) {
+  variantsProductSku = props.product.variants.map((el) => el.product.sku);
+}
+
 const getInitialAvailableColors = () => {
   if (props.product.variants) {
-    let availableOptionsSku = props.product.variants.map(
-      (el) => el.product.sku
-    );
     for (const key in availableColor) {
-      availableColor[key] = availableOptionsSku.some((el) => el.includes(key));
+      availableColor[key] = variantsProductSku.some((el) => el.includes(key));
     }
   }
 };
 const getInitialAvailableSizes = () => {
   if (props.product.variants) {
-    let availableOptionsSku = props.product.variants.map(
-      (el) => el.product.sku
-    );
     for (const key in availableSize) {
-      availableSize[key] = availableOptionsSku.some((el) => {
-        return el.endsWith(key.slice(-1).toLowerCase());
-      });
+      availableSize[key] = variantsProductSku.some((el) =>
+        el.endsWith(key.slice(-1).toLowerCase())
+      );
     }
   }
 };
@@ -163,25 +162,19 @@ const setActiveColor = (arg) => {
     return;
   }
   for (const key in activeColor) {
-    if (arg == key) {
-      activeColor[key] = true;
-    } else {
-      activeColor[key] = false;
-    }
+    activeColor[key] = arg == key ? true : false
   }
   defineAvailableSizes(arg);
 };
 const defineAvailableSizes = (arg) => {
-  let availableOptionsSku = props.product.variants.map((el) => el.product.sku);
-  let temp = availableOptionsSku.filter((el) => el.includes(arg));
+  let skuFiltered = variantsProductSku.filter((el) => el.includes(arg));
   for (const key in availableSize) {
-    if (temp.some((el) => el.endsWith(key.slice(-1).toLowerCase()))) {
-      availableSize[key] = true;
-    } else {
-      availableSize[key] = false;
-    }
+    let optionExist = skuFiltered.some((el) =>
+      el.endsWith(key.slice(-1).toLowerCase())
+    );
+    availableSize[key] = optionExist ? true : false;
   }
-};
+}
 
 //////////////////////  Set active sizes /////////////////////////
 
@@ -192,26 +185,18 @@ const setActiveSize = (arg) => {
     return;
   }
   for (const key in activeSize) {
-    if (arg == key) {
-      activeSize[key] = true
-    } else {
-      activeSize[key] = false
-    }
+    activeSize[key] = arg == key ? true : false
   }
   defineAvailableColors(arg);
 };
 
 const defineAvailableColors = (arg) => {
-  let availableOptionsSku = props.product.variants.map((el) => el.product.sku);
-  let temp = availableOptionsSku.filter((el) =>
+  let skuFiltered = variantsProductSku.filter((el) =>
     el.endsWith(arg[arg.length - 1].toLowerCase())
   );
   for (const key in availableColor) {
-    if (temp.some((el) => el.includes(key))) {
-      availableColor[key] = true;
-    } else {
-      availableColor[key] = false;
-    }
+    let optionExist = skuFiltered.some((el) => el.includes(key))
+    availableColor[key] = optionExist ? true : false;
   }
 };
 
@@ -239,13 +224,13 @@ const imageSrc = ref();
 onMounted(() => {
   imageSrc.value = props.product.image;
 });
-watch([activeColor, activeSize], () => {
+watch([activeColor], () => {
   if (props.product.type == "configurable") {
-    let productOpt = props.product.variants.map((el) => el.product);
-    let activeElement = productOpt.filter((el) =>
+    let variantsProduct = props.product.variants.map((el) => el.product);
+    let activeElement = variantsProduct.find((el) =>
       el.sku.includes(currentColor.value)
     );
-    imageSrc.value = activeElement[0].image.replace("image", "images");
+    imageSrc.value = activeElement.image.replace("image", "images");
   }
 });
 
@@ -254,19 +239,14 @@ watch([activeColor, activeSize], () => {
 const optionsChecked = () => {
   let colorCheck = false;
   let sizeCheck = false;
-  let res = false;
   for (const key in activeColor) {
     if (activeColor[key] == true) colorCheck = true;
   }
   for (const key in activeSize) {
     if (activeSize[key] == true) sizeCheck = true;
   }
-  if (colorCheck && sizeCheck) {
-    res = true;
-  } else {
-    res = false;
-  }
-  return res;
+  let isChecked = colorCheck && sizeCheck ? true : false
+  return isChecked;
 };
 
 const needSelectedOptions = ref(false);
@@ -283,7 +263,6 @@ const alertOptions = () => {
   isOpen.value = true;
 };
 </script>
-
 
 <style lang="scss" scoped>
 .product {
