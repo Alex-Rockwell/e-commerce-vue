@@ -2,7 +2,7 @@
   <div class="container">
     <header class="home-header">
       <RouterLink to="/" class="logo-box">
-        <img src="../assets/images/logo.png" alt="logo icon" class="logo" />
+        <img src="../assets/images/logo2.png" alt="logo icon" class="logo" />
       </RouterLink>
       <RouterLink to="/cart" class="home-header__cart">
         <img
